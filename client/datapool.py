@@ -40,7 +40,7 @@ class PutDataInPool:
 	    seg = self.get(host).split(':')
 	    if seg[0]:
 		if seg[1].find('normal') < 0:
-            		txt.append("%s -- ( %s )" % (LOCATION[seg[0]], seg[1]))
+            		txt.append("%s %s >> [ %s ]" % (seg[0], LOCATION[seg[0]], seg[2]))
 	    
 	if txt :
 	    ws.send_email("<br>".join(txt))
