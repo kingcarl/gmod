@@ -5,7 +5,6 @@ from config import EMAIL_ADDRS, PHONES, SUBJECT, FROMADDR, SMS_SERVER
 from email.mime.text import MIMEText
 from email.header import Header
 from email.utils import COMMASPACE, formatdate
-from config import , 
 
 class WarnSender(object):
     def __init__(self, host, port):
