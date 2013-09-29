@@ -57,6 +57,9 @@ class AsyncClient:
 	msgs = self.to_server_msgs()
 	sockets = self.remove_none(self.async_connect())
 	
+	num = len(msgs)
+	msgs = "%d!" % num + msgs
+	
 	for sock in sockets:
 	    sock.sendall(msgs)
 	

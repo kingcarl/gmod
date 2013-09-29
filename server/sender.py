@@ -29,9 +29,9 @@ class Sender:
 		
 		msgs = sc.recv(4096)
 		
-		if msgs:
-		    elogger.INFO("received %s" % msgs)
-		    err_result = self.sor.ns_probe(self.create_bucket(msgs))
+		if data[1] and len(data[1]) >= int(data[0]):
+		    elogger.INFO("received %s" % data[1])
+		    err_result = self.sor.ns_probe(self.create_bucket(data[1]))
 		else:
 		    break
 		
