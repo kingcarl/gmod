@@ -33,7 +33,9 @@ class Sender:
 		    elogger.INFO("received %s" % data[1])
 		    err_result = self.sor.ns_probe(self.create_bucket(data[1]))
 		else:
-		    break
+		    elogger.INFO("packet less than header num")
+			sc.sendall("%s: normal" % sc.getsockname()[0])
+			break
 		
                 if err_result:
 		    elogger.INFO("send err result")
