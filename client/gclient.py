@@ -58,10 +58,13 @@ class AsyncClient:
 	sockets = self.remove_none(self.async_connect())
 	
 	num = len(msgs)
-	msgs = "%d!" % num + msgs
+	fmsgs = "%d!" % num + msgs
 	
 	for sock in sockets:
-	    sock.sendall(msgs)
+	    try:
+	        sock.sendall(fmsgs)
+	    except Exception, e:
+			elogger.INFO("[socket.error]: %s" % e)
 	
 	while sockets:
             rlist, _, _ = select.select(sockets, [], [])
@@ -81,10 +84,16 @@ class AsyncClient:
 			    break
 			else:
 			    data += new_data
-		sockets.remove(sock)
-		sock.close()
-		self.datapool.put(sock, data)
-		elogger.INFO("get msg %s" % data)
+				
+		if data.find("Loss") >= 0:
+		    lnum = int(data.split(':')[1])
+		    elogger.INFO("[socket.loss]: %s" % msgs[num-lnum:num])
+		    sock.sendall(msgs[num-lnum:num])
+		else:
+		    sockets.remove(sock)
+		    sock.close()
+		    self.datapool.put(sock, data)
+		    elogger.INFO("get msg %s" % data)
 		
 	self.datapool.combine()
  

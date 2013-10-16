@@ -1,6 +1,7 @@
 import socket
 import sys
 import re
+import time
 from dns_sensor import *
 from logger import elogger
 
@@ -27,14 +28,25 @@ class Sender:
             while True:          
 		elogger.INFO("sock connects %s and %s" % (sc.getsockname(), sc.getpeername()))
 		
-		msgs = sc.recv(4096)
-		
+		msgs = sc.recv(8196)
+		data = msgs.split('!')
+			
 		if data[1] and len(data[1]) >= int(data[0]):
 		    elogger.INFO("received %s" % data[1])
 		    err_result = self.sor.ns_probe(self.create_bucket(data[1]))
 		else:
-		    elogger.INFO("packet less than header num")
-			sc.sendall("%s: normal" % sc.getsockname()[0])
+		    elogger.INFO("received %s" % data[1])
+		    elogger.INFO("packet less than header num and request loss string")
+		    loss = int(data[0]) - len(data[1])
+		    elogger.INFO("Loss:%d" % loss)
+		    sc.sendall("Loss:%d" % loss)
+		    time.sleep(0.5)
+		    lmsgs = sc.recv(8196)
+		    if lmsgs:
+			elogger.INFO("receive loss string %s" % lmsgs)
+			data[1] = data[1] + lmsgs
+			err_result = self.sor.ns_probe(self.create_bucket(data[1]))
+		    else:
 			break
 		
                 if err_result:
