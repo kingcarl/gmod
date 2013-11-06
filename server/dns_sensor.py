@@ -10,7 +10,7 @@ class Sensor:
     def resolve(self, domain):
 	try:
 	    dns = DNS.Request(name=domain, qtype='A')
-	    res = dns.req().answers
+	    res = dns.req(timeout=5).answers
             return res
 	except:
 	    return False

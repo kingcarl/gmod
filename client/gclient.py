@@ -56,15 +56,15 @@ class AsyncClient:
     def async_loop(self):
 	msgs = self.to_server_msgs()
 	sockets = self.remove_none(self.async_connect())
-	
+
 	num = len(msgs)
-	fmsgs = "%d!" % num + msgs
-	
+	fmsgs = "%d!" % num + msgs	
+
 	for sock in sockets:
 	    try:
 	        sock.sendall(fmsgs)
 	    except Exception, e:
-			elogger.INFO("[socket.error]: %s" % e)
+		elogger.INFO("[socket.error]: %s" % e)
 	
 	while sockets:
             rlist, _, _ = select.select(sockets, [], [])
@@ -78,17 +78,19 @@ class AsyncClient:
 		    except socket.error, e:
 			if e.args[0] == errno.EWOULDBLOCK:
 			    break
-			raise
+			break
 		    else:
 			if not new_data:
 			    break
 			else:
 			    data += new_data
-				
+			    
 		if data.find("Loss") >= 0:
 		    lnum = int(data.split(':')[1])
 		    elogger.INFO("[socket.loss]: %s" % msgs[num-lnum:num])
 		    sock.sendall(msgs[num-lnum:num])
+		elif not data:
+		    continue
 		else:
 		    sockets.remove(sock)
 		    sock.close()
@@ -131,4 +133,5 @@ def main():
     
 if __name__ == '__main__':
     main()
+
 

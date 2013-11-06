@@ -58,4 +58,3 @@ class Sender:
 		    sc.sendall("%s: normal" % sc.getsockname()[0])
 		    elogger.INFO("domain check normal")
                     break
-
